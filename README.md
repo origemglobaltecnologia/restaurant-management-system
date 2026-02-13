@@ -25,7 +25,6 @@ A rastreabilidade técnica deste projeto está documentada através dos links da
 * **Regist:** [Config Server (Centralização)](https://g.co/gemini/share/782e1425f28f)
 * **Gateway:** [API Gateway (Roteamento)](https://g.co/gemini/share/06c641cbfa59)
 * **Auth:** [Auth Service (Segurança JWT)](https://g.co/gemini/share/ca6ea4564470)
-* **Documentação Atualizada:** [Sessão de Atualização README](https://g.co/gemini/share/6498271943b7)
 
 ## 📦 Microsserviços do Sistema
 1. **auth-service:** Gestão de identidades e tokens.
@@ -42,4 +41,3 @@ A rastreabilidade técnica deste projeto está documentada através dos links da
 
 ## ⚖️ Licença
 Este projeto está licenciado sob a [Licença MIT](LICENSE).
-
