@@ -1,5 +1,4 @@
-# 🍽️ Restaurant System - Ecossistema de Microsserviços
-
+# 🍽️ Restaurant System - Ecossistema de Microsserviços           
 Solução robusta de alta escalabilidade para gestão de operações gastronômicas, desenvolvida pela **Origem Global Tecnologia**. O sistema utiliza uma arquitetura de microsserviços para garantir independência e resiliência entre os setores do restaurante.
 
 ## 🏗️ Master Plan & Arquitetura
@@ -17,14 +16,16 @@ Este projeto segue a arquitetura multicamadas do Spring Boot, focado em:
 
 ## 📑 Histórico de Decisões (Decision Log)
 
-A rastreabilidade técnica deste projeto está documentada através dos links das sessões de arquitetura:
+A rastreabilidade técnica deste projeto está documentada através dos links das sessões de arquitetura e definições:
 
 * **Master Plan:** [Conceito e Identidade](https://g.co/gemini/share/ad47f12b25e3)
-* **Setup GitHub:** (Sessão Privada) - *Este link contém dados sensíveis de identidade (e-mail/usuário) e configurações de segurança de diretório, por isso permanece restrito para proteção de credenciais da agência.*
+* **Master Plan Infraestrutura:** [Planejamento de Infra](https://g.co/gemini/share/370d435ab8e2)
+* **Setup GitHub:** (Sessão Privada) - *Este link contém dados sensíveis de identidade e configurações de segurança.*
 * **Discovery:** [Discovery Server (Eureka)](https://g.co/gemini/share/22490283743b)
 * **Regist:** [Config Server (Centralização)](https://g.co/gemini/share/782e1425f28f)
 * **Gateway:** [API Gateway (Roteamento)](https://g.co/gemini/share/06c641cbfa59)
 * **Auth:** [Auth Service (Segurança JWT)](https://g.co/gemini/share/ca6ea4564470)
+* **Documentação Atualizada:** [Sessão de Atualização README](https://g.co/gemini/share/6498271943b7)
 
 ## 📦 Microsserviços do Sistema
 1. **auth-service:** Gestão de identidades e tokens.

@@ -1,4 +1,4 @@
-# Java & Maven
+# === Java & Maven ===
 target/
 *.class
 *.jar
@@ -6,33 +6,54 @@ target/
 *.ear
 *.zip
 *.tar.gz
+*.rar
 
 # Maven Wrapper
 .mvn/
 mvnw
 mvnw.cmd
 
-# IDEs
+# === IDEs & Editores (VSCode, IntelliJ, Eclipse, Vim) ===
 .idea/
 *.iml
 .vscode/
 .settings/
 .project
 .classpath
+*.swp
+*.swo
+.factorypath
+.metadata/
 
-# Logs e Temporários
+# === Logs e Temporários ===
 *.log
 logs/
 temp/
 tmp/
+*.stackdump
+*.tmp
+*.bak
 
-# Configurações Locais e Segurança
+# === Configurações Locais e Segurança (Spring Cloud) ===
 application-local.properties
 application-local.yml
+bootstrap-local.yml
 .env
+*.jks
+*.p12
+*.pem
+*.key
+auth-key.txt
 
-# Sistema (Android/Termux)
+# === Sistema (Android/Termux/Linux/macOS) ===
 .DS_Store
 .thumbnails/
 .bash_history
+.cache/
+.java/
+.history/
+.recommenders/
 
+# === Outros ===
+bin/
+out/
