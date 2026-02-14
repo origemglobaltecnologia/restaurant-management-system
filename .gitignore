@@ -22,11 +22,13 @@ mvnw.cmd
 .classpath
 *.swp
 *.swo
+*.sh.swp
 .factorypath
 .metadata/
 
 # === Logs e Temporários ===
 *.log
+/logs/*.log
 logs/
 temp/
 tmp/
@@ -45,6 +47,9 @@ bootstrap-local.yml
 *.key
 auth-key.txt
 
+# IGNORAR APENAS O CONFIG DA PASTA BIN
+/bin/services.conf
+
 # === Sistema (Android/Termux/Linux/macOS) ===
 .DS_Store
 .thumbnails/
@@ -55,5 +60,4 @@ auth-key.txt
 .recommenders/
 
 # === Outros ===
-bin/
 out/
