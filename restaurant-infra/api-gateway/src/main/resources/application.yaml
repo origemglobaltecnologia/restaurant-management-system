@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: api-gateway
+  
+  # Importação das configurações do Config Server (Porta 8888)
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: true
+      
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      
+      # Rotas locais de fallback (Caso o Config Server esteja inacessível)
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+        
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - name: AuthenticationFilter
+
+        - id: employer-service
+          uri: lb://employer-service
+          predicates:
+            - Path=/api/employers/**
+          filters:
+            - name: AuthenticationFilter
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    fetchRegistry: true
+    registerWithEureka: true
+  instance:
+    preferIpAddress: true
+
+server:
+  port: 8080

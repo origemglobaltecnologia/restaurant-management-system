@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: discovery-server-route
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka-ui/**
+          filters:
+            - StripPrefix=1
+
+info:
+  app:
+    name: "API Gateway Origem Global"
+    status: "Operacional"
