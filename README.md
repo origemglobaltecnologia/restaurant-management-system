@@ -14,19 +14,6 @@ Este projeto segue a arquitetura multicamadas do Spring Boot, focado em:
 - **Gestão de Dependências:** Gradle (Daemon desativado para ambiente Termux)
 - **Padrão de Pacotes:** `tech.origemglobal.restaurante`
 
-## 📑 Histórico de Decisões (Decision Log)
-
-A rastreabilidade técnica e estratégica deste projeto está documentada através dos links das sessões:
-
-* **Master Plan de Negócios:** [Visão Estratégica e Business Layer](https://g.co/gemini/share/6498271943b7)
-* **Master Plan:** [Conceito e Identidade](https://g.co/gemini/share/ad47f12b25e3)
-* **Master Plan Infraestrutura:** [Planejamento de Infra](https://g.co/gemini/share/370d435ab8e2)
-* **Setup GitHub:** (Sessão Privada) - *Dados sensíveis de identidade e configurações.*
-* **Discovery:** [Discovery Server (Eureka)](https://g.co/gemini/share/22490283743b)
-* **Regist:** [Config Server (Centralização)](https://g.co/gemini/share/782e1425f28f)
-* **Gateway:** [API Gateway (Roteamento)](https://g.co/gemini/share/06c641cbfa59)
-* **Auth:** [Auth Service (Segurança JWT)](https://g.co/gemini/share/ca6ea4564470)
-
 ## ⚙️ Diretrizes Técnicas (Arquitetura de Comunicação)
 * **Service Discovery:** Netflix Eureka (Porta 8761).
 * **API Gateway:** Spring Cloud Gateway (Porta 8080) como ponto único de entrada.

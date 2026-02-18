@@ -8,47 +8,69 @@ get_path() {
     else echo "$ROOT_DIR/$2"; fi
 }
 
+start_service() {
+    local name=$1 base=$2 sub=$3 port=$4 key=$5
+    
+    # Pula o Employer-Service para poupar RAM
+    if [ "$name" == "Employer-Service" ]; then
+        echo "⏭️  $name ignorado por questões de performance."
+        return
+    fi
+
+    local TARGET_PATH=$(get_path "$base" "$sub")
+    
+    # Flags de Memória de Sobrevivência (Mínimo absoluto)
+    # -Xmx80m: Teto muito baixo
+    # -Xshare:off: Economiza memória nativa de classes compartilhadas
+    # -XX:-UseBiasedLocking: Reduz overhead de threads
+    local JVM_OPTS="-Xms32m -Xmx80m -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xss256k -Xshare:off"
+    
+    echo "🌱 Subindo $name (Modo Econômico)..."
+    if [ "$name" == "Database" ]; then
+        pg_ctl -D $PREFIX/var/lib/postgresql start > /dev/null 2>&1
+        sleep 5
+    else
+        local JAR_FILE=$(find "$TARGET_PATH/target" -name "*.jar" ! -name "*-sources.jar" | head -n 1)
+        
+        if [ -z "$JAR_FILE" ]; then
+            echo "❌ Erro: JAR não encontrado em $sub. Rode 'mvn install' primeiro."
+            return
+        fi
+
+        local ARGS=""
+        if [[ "$name" =~ ^(Gateway|Auth-Service|User-Service)$ ]]; then
+            ARGS="--spring.config.import=optional:configserver:http://localhost:8888"
+        fi
+
+        nohup java $JVM_OPTS -jar "$JAR_FILE" $ARGS > "$LOG_DIR/${key}.log" 2>&1 &
+    fi
+}
+
 case "$1" in
     up)
-        echo "🚀 Iniciando Sistema (Modo Otimizado)..."
+        echo "🚀 Iniciando Sistema (MODO PERFORMANCE - Employer OFF)..."
         mkdir -p "$LOG_DIR"
+        pkill -9 java
+        
         for item in "${SERVICES[@]}"; do
             IFS=':' read -r name base sub port key <<< "$item"
-            pid=$(pgrep -f "$key" | head -n 1)
+            start_service "$name" "$base" "$sub" "$port" "$key"
             
-            if [ -n "$pid" ]; then
-                echo "✅ $name já está online."
+            # Pausas maiores para não saturar a CPU do celular
+            if [[ "$port" =~ ^(8761|8888)$ ]]; then
+                echo "⏳ Estabilizando Infra..."
+                sleep 45
             else
-                TARGET_PATH=$(get_path "$base" "$sub")
-                echo "🌱 Subindo $name..."
-                
-                if [ "$name" == "Database" ]; then
-                    pg_ctl -D $PREFIX/var/lib/postgresql start > /dev/null 2>&1
-                    sleep 4
-                else
-                    cd "$TARGET_PATH"
-                    
-                    # Argumentos de importação do Config Server para serviços dependentes
-                    if [[ "$name" =~ ^(Gateway|Auth-Service|User-Service)$ ]]; then
-                        CMD_ARGS="-Dspring-boot.run.arguments='--spring.config.import=optional:configserver:http://localhost:8888'"
-                    else
-                        CMD_ARGS=""
-                    fi
-
-                    # Rodando com limites de memória para estabilidade no Termux
-                    nohup mvn spring-boot:run $CMD_ARGS -Dspring-boot.run.jvmArguments="-Xmx180m -Xms128m" > "$LOG_DIR/${key}.log" 2>&1 &
-                    
-                    [[ "$port" =~ ^(8761|8888)$ ]] && sleep 25 || sleep 15
-                fi
+                sleep 25
             fi
         done
-        echo "✨ Sistema pronto. Employer-Service mantido em OFF para poupar RAM."
+        echo "✨ Infraestrutura básica e User-Service ativos."
         ;;
 
     status)
-        echo -e "\n📊 Monitor de Recursos:"
+        echo -e "\n📊 Monitor de Recursos (Limite: 80MB Heap):"
         echo "----------------------------------------------------"
-        printf "%-18s | %-8s | %-8s\n" "Serviço" "Status" "RAM"
+        printf "%-18s | %-8s | %-8s\n" "Serviço" "Status" "RAM (RSS)"
         echo "----------------------------------------------------"
         for item in "${SERVICES[@]}"; do
             IFS=':' read -r name base sub port key <<< "$item"
@@ -60,24 +82,11 @@ case "$1" in
                 printf "%-18s | \e[31mOFF\e[0m    | -\n" "$name"
             fi
         done
-        # Verificação extra manual do Employer para você não perder o controle
-        emp_pid=$(pgrep -f "employer-service" | head -n 1)
-        if [ -n "$emp_pid" ]; then
-            mem_emp=$(ps -o rss= -p "$emp_pid" | awk '{print int($1/1024) "MB"}' 2>/dev/null)
-            printf "%-18s | \e[33mMANUAL\e[0m | %-8s\n" "Employer-Service" "$mem_emp"
-        fi
-        echo "----------------------------------------------------"
         ;;
 
     down)
-        echo "🛑 Desligando..."
-        # Mata os serviços da lista e também o employer caso ele tenha sido subido manualmente
-        for key in "postgres" "discovery-server" "config-server" "auth-service" "api-gateway" "user-service" "employer-service"; do
-            pid=$(pgrep -f "$key")
-            if [ -n "$pid" ]; then
-                [ "$key" == "postgres" ] && pg_ctl -D $PREFIX/var/lib/postgresql stop > /dev/null 2>&1 || kill -9 $pid
-            fi
-        done
-        echo "✅ Todos os serviços (incluindo manuais) foram parados."
+        pkill -9 java
+        pg_ctl -D $PREFIX/var/lib/postgresql stop > /dev/null 2>&1
+        echo "✅ Cleanup completo."
         ;;
 esac

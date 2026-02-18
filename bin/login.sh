@@ -1,19 +1,19 @@
 #!/bin/bash
-echo "🚀 Tentando login em http://localhost:8080/api/auth/login..."
-RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/auth/login \
--H "Content-Type: application/json" \
--d '{"email": "origem", "password": "123"}')
+# Agora apontando para o Gateway (8080) que roteia para o Auth-Service
+AUTH_URL="http://localhost:8080/api/auth/login"
+EMAIL="gerente@origem.tech"
+PASSWORD="admin"
 
-BODY=$(echo "$RESPONSE" | head -n 1)
-STATUS=$(echo "$RESPONSE" | tail -n 1)
+echo "🔐 Tentando autenticação via Gateway na porta 8080..."
 
-if [ "$STATUS" -eq 200 ]; then
-    echo "✅ Sucesso! Token gerado:"
-    echo "$BODY" | grep -oP '(?<="token":")[^"]*'
-elif [ "$STATUS" -eq 503 ]; then
-    echo "❌ Erro 503: O Gateway não encontrou o Auth-Service no Eureka."
-    echo "Dica: Verifique http://localhost:8761 e veja se AUTH-SERVICE está na lista."
+RESPONSE=$(curl -s -X POST "$AUTH_URL" \
+     -H "Content-Type: application/json" \
+     -d "{\"email\":\"$EMAIL\", \"password\":\"$PASSWORD\"}")
+
+if echo "$RESPONSE" | grep -q "token"; then
+    echo "$RESPONSE" | jq -r '.token // .accessToken' > .token
+    echo "✅ Login realizado via Gateway! Token salvo em .token"
 else
-    echo "❌ Erro $STATUS: Verifique as credenciais ou o log do Auth-Service."
-    echo "Resposta: $BODY"
+    echo "❌ Erro no login via Gateway."
+    echo "Resposta do servidor: $RESPONSE"
 fi
